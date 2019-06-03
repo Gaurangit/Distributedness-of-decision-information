@@ -96,21 +96,46 @@ A32mBS20BH_ETH_T50=[]
 for i in range (3975):
     A32mBS20BH_ETH_T50.append(A32mBS20BH_ETH[i+50])
     
-#Mutual Info with time shift
-
-xsT50 = np.asarray(A32mBS20BH_ETH_T50) + 1
-
-mutu_info_ET_t50=[]
-ysvT50=[]
-ysv=[]
-for i in range (68):
-    ysvT50=[]
-    ysv=np.swapaxes(A32mBS20BH_ACT[i:(i+1), :], 0,1)
-    ysv=ysv.reshape(4026, )
-    for i in range (3975):
-        ysvT50.append(ysv[i])
+#sum_ALL_MI =[]
+def time_shift(T):
     
-    ysT50= np.asarray(ysvT50) + 10
-    k=pyinform.mutualinfo.mutual_info(xsT50, ysT50, bx=0, by=0, b=2.0, local=False)
-    mutu_info_ET_t50.append(k)
-
+    xsT=[]
+    ysT=[]
+    sum_ALL_MI =[]
+    A32mBS20BH_ETH_T=[]
+    mutu_info_ET_t=[]
+    ysvT=[]
+    ysv=[]
+    for i in range (4025-T):
+        A32mBS20BH_ETH_T.append(A32mBS20BH_ETH[i+T])
+    
+    
+    
+    for i in range (68):
+        ysvT=[]
+        xsT = np.asarray(A32mBS20BH_ETH_T) + 1
+        ysv=np.swapaxes(A32mBS20BH_ACT[i:(i+1), :], 0,1)
+        ysv=ysv.reshape(4026, )
+        for i in range (4025-T):
+            ysvT.append(ysv[i])
+        ysT= np.asarray(ysvT) + 10
+        
+        
+        k=pyinform.mutualinfo.mutual_info(xsT, ysT, bx=0, by=0, b=2.0, local=False)
+        mutu_info_ET_t.append(k)
+        
+    we=sum(mutu_info_ET_t)
+    return we
+    #print(len(ysT),len (xsT))
+    #plt.plot(sum_ALL_MI)
+# Calling above Shift function
+numset=[]
+for i in range (100):
+    numset.append(5*i)
+sum_ALL_MI=[]
+qaz=[]
+for event in numset:
+    qaz=time_shift(event)
+    sum_ALL_MI.append(qaz)
+    
+plt.plot(sum_ALL_MI)
