@@ -139,3 +139,60 @@ for event in numset:
     sum_ALL_MI.append(qaz)
     
 plt.plot(sum_ALL_MI)
+
+
+# Time Shift of T, Top 5 elements only
+sum_ALL_MI =[]
+def time_shift_5(T):
+    
+    xsT=[]
+    ysT=[]
+    TP_5_MI =[]
+    A32mBS20BH_ETH_T=[]
+    mutu_info_ET_t=[]
+    ysvT=[]
+    ysv=[]
+    io=0
+    for i in range (4026-T):
+        A32mBS20BH_ETH_T.append(A32mBS20BH_ETH[i+T])
+       
+
+    ArT=[]
+    ArryHT_E_Shift = np.asarray(ArT)
+    for i in range (68):
+        ysvT=[]
+        xsT = np.asarray(A32mBS20BH_ETH_T) + 2
+        ysv=np.swapaxes(A32mBS20BH_ACT[i:(i+1), :], 0,1)
+        ysv=ysv.reshape(4026, )
+        ut=i
+        for i in range (4026-T):
+            ysvT.append(ysv[i])
+        ysT= np.asarray(ysvT) + 10
+        u9=len(ysT)
+        
+        k=pyinform.mutualinfo.mutual_info(xsT, ysT, bx=0, by=0, b=2.0, local=False)
+        mutu_info_ET_t.append(k)
+        
+    mutu_info_ET_t.sort(reverse = True )
+    TP_5_MI=mutu_info_ET_t[:5]
+    we=np.asarray(TP_5_MI)
+    we=we.reshape(1,-1)
+    
+    
+    #return ArryHT_E_Shift.shape, we.shape
+    return we
+
+
+#Heat map plot
+
+plt.rcParams["figure.figsize"] = 10,10
+fig, ax = plt.subplots()
+PLT_HT=pd.DataFrame(AWRY)
+sns.heatmap(PLT_HT, cmap="plasma")
+
+
+##Saving the Heatmap
+
+o=sns.heatmap(PLT_HT, cmap="plasma")
+figure = o.get_figure()    
+figure.savefig('ETH_1000_shift(top_5)_heatmap.png', dpi=400)
